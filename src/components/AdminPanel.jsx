@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Datetime from 'react-datetime';
 
-
 export default class AdminPanel extends Component {
 
   constructor(props) {

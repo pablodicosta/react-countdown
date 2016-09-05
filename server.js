@@ -2,22 +2,25 @@ var express = require('express');
 var http = require('http');
 var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
-var webpackHotMiddleware = require('webpack-hot-middleware');
-var webpackConfig = require('./webpack.config');
 var db = require('./lib/db');
 var bodyParser = require('body-parser');
 
 var app = express();
 var server = http.Server(app);
+var prodEnv = process.env.NODE_ENV === 'production';
+var webpackConfig = prodEnv ? require('./webpack.prod.config') : require('./webpack.dev.config');
 var compiler = webpack(webpackConfig);
 
 app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath,
     stats: {colors: true}
 }));
-app.use(webpackHotMiddleware(compiler, {
-      log: console.log
-}));
+if(!prodEnv) {
+  var webpackHotMiddleware = require('webpack-hot-middleware');
+  app.use(webpackHotMiddleware(compiler, {
+    log: console.log
+  }));
+}
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/dist'));
 

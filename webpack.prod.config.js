@@ -2,18 +2,13 @@ var webpack = require('webpack');
 
 module.exports = {
   entry: [
-    'webpack/hot/dev-server',
-    'webpack-hot-middleware/client',
     './src/index.jsx'
   ],
   module: {
     loaders: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      loader: 'react-hot-loader/webpack!babel',
-    },
-    { test: /\.css$/,
-      loader: "style-loader!css-loader"
+      loader: 'babel',
     }]
   },
   resolve: {
@@ -30,7 +25,17 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+     'process.env': {
+       'NODE_ENV': '"production"'
+     }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      compress: {
+        warnings: false
+      },
+    })
   ]
 };
